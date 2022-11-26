@@ -1,0 +1,33 @@
+#The following helm options will make the bitnami/postgresql work on armv7 with the TimescaleDB plugin
+#Obviously change the auth, storage, and service stuff for your needs
+#helm install pg -f helm-options.yaml bitnami/postgresql
+image:
+  repository: ashtacore/timescaledb
+  tag: "latest-pg14"
+
+auth:
+  postgresPassword: pgpass
+
+primary:
+  persistence:
+    existingClaim: pg-pvc
+  service:
+    type: LoadBalancer
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+
+volumePermissions:
+  enabled: true
+  image:
+    repository: arm32v7/alpine
+    tag: "3.17"
+
+securityContext:
+  fsGroup: 999
+  runAsUser: 999
+
+livenessProbe:
+  initialDelaySeconds: 300
+
+readinessProbe:
+  initialDelaySeconds: 300
