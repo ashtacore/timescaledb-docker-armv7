@@ -1,5 +1,7 @@
 #The following helm options will make the bitnami/postgresql work on armv7 with the TimescaleDB plugin
 #Obviously change the auth, storage, and service stuff for your needs
+#It is also obvious that running as root is a bad idea, but the default user "1001" doesn't exist and this works
+
 #helm install pg -f helm-options.yaml bitnami/postgresql
 image:
   repository: ashtacore/timescaledb
@@ -15,16 +17,26 @@ primary:
     type: LoadBalancer
     loadBalancerIP: ""
     loadBalancerSourceRanges: []
+  podSecurityContext:
+    fsGroup: 0
+  containerSecurityContext:
+    runAsUser: 0
+
+readReplicas:
+  podSecurityContext:
+    fsGroup: 0
+  containerSecurityContext:
+    runAsUser: 0
+
+metrics:
+  containerSecurityContext:
+    runAsUser: 0
 
 volumePermissions:
   enabled: true
   image:
     repository: arm32v7/alpine
     tag: "3.17"
-
-securityContext:
-  fsGroup: 999
-  runAsUser: 999
 
 livenessProbe:
   initialDelaySeconds: 300
